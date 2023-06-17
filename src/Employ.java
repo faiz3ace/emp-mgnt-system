@@ -38,7 +38,7 @@ public class Employ {
     public void setEmpName(String empName) {
         if (empName.length() >= 3) {
             if (Pattern.matches("[a-zA-Z-\\s]+", empName)) {
-                generateEmpId();
+                //generateEmpId();
                 this.empName = empName;
                 System.out.println("EmpID:" + this.empId);
             } else {

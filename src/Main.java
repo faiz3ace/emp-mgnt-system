@@ -12,12 +12,19 @@ public class Main {
     static Map<Long, Employ> data = new HashMap<>();
 
     public static void main(String[] args) {
-
+        Scanner sc = new Scanner(System.in);
         String path = "";
         boolean isQuit = true;
+        System.out.print("Do you want to store data (Y/N)?:");
+        String option = sc.nextLine();
+        while (option.length() != 1) {
+            System.out.print("Please try again and select Y/N:");
+            option = sc.nextLine();
+        }
+        char ch = option.charAt(0);
+        System.out.println(ch);
         do {
             try {
-                Scanner sc = new Scanner(System.in);
                 System.out.print("Emp-System" + path + ">");
                 String command = sc.nextLine();
                 if (command.equalsIgnoreCase("quit")) {
@@ -25,20 +32,24 @@ public class Main {
                 }
                 if (isQuit) {
                     String cmd = command.split(" ")[0];
-                    if (cmd.equalsIgnoreCase("viewall")) {
-                        viewAll();
-                    } else if (cmd.equalsIgnoreCase("view")) {
-                        Long id = Long.valueOf(command.split(" ")[1]);
-                        System.out.println(viewData(id));
-                        path = "\\" + data.get(id).getEmpName();
-                    } else if (cmd.equalsIgnoreCase("add")) {
-                        addData(getName(cmd, command));
-                    } else if (cmd.equalsIgnoreCase("update")) {
-                        updateData(Long.valueOf(command.split(" ")[1]), getName(cmd, command));
-                    } else if (cmd.equalsIgnoreCase("delete")) {
-                        System.out.println("In progress");
-                    }else {
-                        System.out.println("Invalid Command...");
+                    if (getDbConnection(ch).equals("Connected")) {
+
+                    } else {
+                        if (cmd.equalsIgnoreCase("viewall")) {
+                            viewAll();
+                        } else if (cmd.equalsIgnoreCase("view")) {
+                            Long id = Long.valueOf(command.split(" ")[1]);
+                            System.out.println(viewData(id));
+                            path = "\\" + data.get(id).getEmpName();
+                        } else if (cmd.equalsIgnoreCase("add")) {
+                            addData(getName(cmd, command));
+                        } else if (cmd.equalsIgnoreCase("update")) {
+                            updateData(Long.valueOf(command.split(" ")[1]), getName(cmd, command));
+                        } else if (cmd.equalsIgnoreCase("delete")) {
+                            System.out.println("In progress");
+                        } else {
+                            System.out.println("Invalid Command...");
+                        }
                     }
 
                 }
@@ -87,7 +98,7 @@ public class Main {
                     empName = name[1] + " " + name[2];
                 if (name.length >= 4 && cmd.equalsIgnoreCase("update"))
                     empName = name[2] + " " + name[3];
-                if (cmd.equalsIgnoreCase("update"))
+                if (name.length<=3&&cmd.equalsIgnoreCase("update"))
                     empName = name[2];
             } else {
                 if (cmd.equalsIgnoreCase("add"))
@@ -97,5 +108,12 @@ public class Main {
             }
         }
         return empName;
+    }
+
+    private static String getDbConnection(char ch) {
+        if (ch == 'Y' || ch == 'y')
+            return "Connected";
+        else
+            return "notConnected";
     }
 }
