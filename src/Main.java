@@ -10,11 +10,12 @@ import java.util.Scanner;
 
 public class Main {
     static Map<Long, Employ> data = new HashMap<>();
-
+    static boolean isRecordOpen=false;
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String path = "";
-        boolean isQuit = true;
+        Long id=0L;
+        boolean isQuit = false;
         System.out.print("Do you want to store data (Y/N)?:");
         String option = sc.nextLine();
         while (option.length() != 1) {
@@ -25,12 +26,13 @@ public class Main {
         System.out.println(ch);
         do {
             try {
-                System.out.print("Emp-System" + path + ">");
+                String consolePath="Emp-System" + path + ">";
+                System.out.print(consolePath);
                 String command = sc.nextLine();
                 if (command.equalsIgnoreCase("quit")) {
-                    isQuit = false;
+                    isQuit = true;
                 }
-                if (isQuit) {
+                if (!isQuit&&!isRecordOpen) {
                     String cmd = command.split(" ")[0];
                     if (getDbConnection(ch).equals("Connected")) {
 
@@ -38,25 +40,48 @@ public class Main {
                         if (cmd.equalsIgnoreCase("viewall")) {
                             viewAll();
                         } else if (cmd.equalsIgnoreCase("view")) {
-                            Long id = Long.valueOf(command.split(" ")[1]);
-                            System.out.println(viewData(id));
-                            path = "\\" + data.get(id).getEmpName();
+                            try{
+                            id = Long.valueOf(command.split(" ")[1]);
+                            if(viewData(id)!=null)
+                                path = "\\" + viewData(id).getEmpName();
+                            else
+                                System.out.println("Record Not Found");
+                            }catch(Exception ex){
+                                String name="";
+                                if(command.split(" ").length==2)
+                                    name=command.split(" ")[1];
+                                if(command.split(" ").length==3)
+                                    name=command.split(" ")[1]+ " "+command.split(" ")[2];
+                                System.out.println("Invalid...");
+                                viewData(name);
+                            }
                         } else if (cmd.equalsIgnoreCase("add")) {
                             addData(getName(cmd, command));
                         } else if (cmd.equalsIgnoreCase("update")) {
                             updateData(Long.valueOf(command.split(" ")[1]), getName(cmd, command));
                         } else if (cmd.equalsIgnoreCase("delete")) {
-                            System.out.println("In progress");
+                            if(command.split(" ").length==2)
+                                System.out.println("Recrod Deleted:"+deleteRecord(Long.valueOf(command.split(" ")[1])));
+                            else if(command.split(" ").length==3)
+                                System.out.println(deleteRecord(Long.valueOf(command.split(" ")[1]),command.split(" ")[2]));
+                            else
+                                System.out.println("Delete will accept only 1/2 args");
                         } else {
                             System.out.println("Invalid Command...");
                         }
                     }
 
+                }else if(!isQuit&&isRecordOpen){
+                    if(command.split(" ")[0].equalsIgnoreCase("close")||command.split(" ")[0].equalsIgnoreCase("exit")){
+                        id=0L;
+                        path="";
+                        isRecordOpen=false;
+                    }
                 }
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-        } while (isQuit);
+        } while (!isQuit);
 
     }
 
@@ -70,11 +95,23 @@ public class Main {
         return null;
     }
 
-    private static String viewData(Long empId) {
+    private static Employ viewData(Long empId) {
         Employ entry = data.get(empId);
-        return "Id: " + entry.getEmpId() + ", Name: " + entry.getEmpName();
+        if(entry!=null){
+            isRecordOpen=true;
+            return entry;
+        }
+        else{
+            return new Employ();
+        }
     }
-
+    private static void viewData(String empName) {
+        for(Long emp:data.keySet()){
+            if(data.get(emp).getEmpName().equals(empName)){
+                System.out.println("Emp ID:"+emp+"\t"+"Emp Name:"+data.get(emp).getEmpName());
+            }
+        }
+    }
     private static void addData(String name) {
         Employ create = new Employ(name);
         data.put(create.getEmpId(), create);
@@ -83,7 +120,18 @@ public class Main {
     private static void updateData(Long empId, String update) {
         data.get(empId).setEmpName(update);
     }
-
+    private static String deleteRecord(Long empId){
+        return data.remove(empId).getEmpName();
+    }
+    
+    private static String deleteRecord(Long empId,String empName){
+        if(data.get(empId).getEmpName().equals(empName)){
+            data.remove(empId);
+            return "Deleted Successfully";
+        }
+        else
+            return "Record Not Found";
+    }
     private static String getName(String cmd, String command) {
         String empName = "";
         if (command.contains("\"")) {
