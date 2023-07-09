@@ -71,11 +71,50 @@ public class Main {
                         }
                     }
 
-                }else if(!isQuit&&isRecordOpen){
+                }
+                if(!isQuit&&isRecordOpen){
+                    Employ employ=data.get(id);
                     if(command.split(" ")[0].equalsIgnoreCase("close")||command.split(" ")[0].equalsIgnoreCase("exit")){
                         id=0L;
                         path="";
                         isRecordOpen=false;
+                    }
+                    boolean isEmpty=false;
+                    if(employ.getAddress()==null){
+                        isEmpty=true;
+                        System.out.print("Address, ");
+                    }
+                    if(employ.getContact()==null){
+                        isEmpty=true;
+                        System.out.print("Contact, ");
+                    }
+                    if(employ.getEducation()==null){
+                        isEmpty=true;
+                        System.out.print("Education, ");
+                    }
+                    if(employ.getEmployment()==null){
+                        isEmpty=true;
+                        System.out.print("Employment, ");
+                    }
+                    if(employ.getSkills()==null){
+                        isEmpty=true;
+                        System.out.print("Skills ");
+                    }
+                    if(employ.getExperience()!=null){
+                        isEmpty=true;
+                        System.out.print("Experience, ");
+                    }
+                    if(isEmpty)
+                        System.out.println(" are/is not updated...");
+                    
+                    System.out.print("Do you want to update?(Y/N):");
+                    char input=sc.nextLine().charAt(0);
+                    if(input=='Y'||input=='y'){
+                        System.out.println("Coming soon...");
+                    }else if(input=='N'||input=='n'){
+                        System.out.println("Coming soon...");
+                    }else{
+                        System.out.println("Coming soon...");
                     }
                 }
             } catch (Exception ex) {
