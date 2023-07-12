@@ -3,6 +3,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import lombok.Data;
+
+@Data
 public class Employ {
     private Long empId;
     private String empName;
