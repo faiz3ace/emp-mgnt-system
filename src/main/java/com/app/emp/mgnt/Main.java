@@ -1,9 +1,4 @@
 package com.app.emp.mgnt;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +7,8 @@ import java.util.Scanner;
 public class Main {
     static Map<Long, Employ> data = new HashMap<>();
     static boolean isRecordOpen=false;
+    private static Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
         String path = "";
         Long id=0L;
         boolean isQuit = false;
@@ -57,7 +52,12 @@ public class Main {
                                 viewData(name);
                             }
                         } else if (cmd.equalsIgnoreCase("add")) {
-                            addData(getName(cmd, command));
+                            id=addData(getName(cmd, command));
+                            System.out.print("Do you want to update all details?(Y/N):");
+                            char input=sc.nextLine().charAt(0);
+                            if(input=='Y'||input=='y') {
+                            	updateAllData(id);
+                            }
                         } else if (cmd.equalsIgnoreCase("update")) {
                             updateData(Long.valueOf(command.split(" ")[1]), getName(cmd, command));
                         } else if (cmd.equalsIgnoreCase("delete")) {
@@ -152,9 +152,10 @@ public class Main {
             }
         }
     }
-    private static void addData(String name) {
+    private static Long addData(String name) {
         Employ create = new Employ(name);
         data.put(create.getEmpId(), create);
+        return create.getEmpId();
     }
 
     private static void updateData(Long empId, String update) {
@@ -203,5 +204,15 @@ public class Main {
             return "Connected";
         else
             return "notConnected";
+    }
+    private static void updateAllData(Long id) {
+    	
+    	
+    }
+    private void updateContact(Long id) {
+    	System.out.println("Update Contact Details:");
+    	Contact contact=new Contact();
+    	
+    	contact.setCode(null);
     }
 }
